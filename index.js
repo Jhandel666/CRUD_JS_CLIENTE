@@ -13,7 +13,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  host: process.env.PGHOST,
+  port: Number(process.env.PGPORT),
+  database: process.env.PGDATABASE,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
   ssl: {
     rejectUnauthorized: false
   }
@@ -38,7 +42,6 @@ app.get('/clientes', async (req, res) => {
     const result = await pool.query(
       'SELECT * FROM clientes ORDER BY id_cliente ASC'
     );
-
     res.status(200).json(result.rows);
   } catch (error) {
     res.status(500).json({
@@ -167,7 +170,7 @@ app.delete('/eliminar-cliente/:id', async (req, res) => {
 initDB()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Servidor escuchando en http://localhost:${port}`);
+      console.log(`Servidor escuchando en el puerto ${port}`);
     });
   })
   .catch((error) => {
